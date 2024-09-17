@@ -5,10 +5,7 @@ import java.net.Socket;
 
 import javax.net.ssl.SSLSocketFactory;
 
-import wordle.Controller.GameController;
-
 public class Client {
-
    
     public static void main(String[] args) {
 

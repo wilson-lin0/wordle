@@ -1,4 +1,4 @@
-package wordle.Controller;
+package wordle;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

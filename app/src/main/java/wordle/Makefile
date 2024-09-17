@@ -1,18 +1,22 @@
 JAVAC = javac
 JAVA = java
-JFLAGS = -g
+JFLAGS = -cp ".;C:\Users\wilso\wordle\app\dep\*"
+SRC = C:\Users\wilso\wordle\app\src\main\java\wordle\Client.java C:\Users\wilso\wordle\app\src\main\java\wordle\Controller\*.java
+CLASS = wordle.Client
+JAR_NAME = client.jar
+OUT_DIR = C:\Users\wilso\wordle\app\src\main\java\
+DEP_DIR = C:\Users\wilso\wordle\app\dep\
 
-SOURCES = Client.java
-CLASSES = $(SOURCES:.java=.class)
+all: compile
 
-all: $(CLASSES)
+compile:
+	$(JAVAC) $(JFLAGS) -d $(OUT_DIR) $(SRC)
 
-%.class: %.java
-	$(JAVAC) $(JFLAGS) $<
+package: compile
+	jar cvf $(JAR_NAME) -C $(OUT_DIR) .
 
-
-run: all
-	$(JAVA) Client $(ARGS)
+run: compile
+	java -cp "$(OUT_DIR);$(DEP_DIR)\*" $(CLASS) $(ARGS)
 
 clean:
-	rm -f *.class
+	del /Q $(OUT_DIR)\*.class $(JAR_NAME)
