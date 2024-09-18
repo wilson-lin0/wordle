@@ -55,11 +55,11 @@ public class GameController {
         String type = message.get("type").asText();
 
         if ("start".equals(type)) {
-            handleStart(message.get("arguments"));
+            handleStart(message.get("id"));
         } else if ("retry".equals(type)) {
-            handleRetry(message.get("arguments"));
+            handleRetry(message.get("guesses"));
         } else if ("bye".equals(type)) {
-            handleBye(message.get("arguments"));
+            handleBye(message.get("flag"));
         }
     }
 
