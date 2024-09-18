@@ -39,6 +39,7 @@ public class GameController {
     // Starts the function, continues recieving messages until the socket is closed
     public void run() {
         sendHello(this.output, this.username);
+        
         try {
             JsonParser parser = this.mapper.getFactory().createParser(this.input);
             while (!this.socket.isClosed()) {
@@ -55,11 +56,11 @@ public class GameController {
         String type = message.get("type").asText();
 
         if ("start".equals(type)) {
-            handleStart(message.get("id"));
+            handleStart(message);
         } else if ("retry".equals(type)) {
-            handleRetry(message.get("guesses"));
+            handleRetry(message);
         } else if ("bye".equals(type)) {
-            handleBye(message.get("flag"));
+            handleBye(message);
         }
     }
 
@@ -74,6 +75,7 @@ public class GameController {
     // Stores the game ID and sends the first guess "adieu"
     private void handleStart(JsonNode arguments) {
         this.gameID = arguments.get("id").asText();
+
         JSONObject firstGuess = new JSONObject();
         firstGuess.put("type", "guess");
         firstGuess.put("id", this.gameID);
@@ -114,7 +116,7 @@ public class GameController {
     private void updateWordList(String guess, JSONArray marks) {
         List<String> updatedList = new ArrayList<>();
 
-        for (String word : wordList) {
+        for (String word : this.wordList) {
             if (validGuess(word, guess, marks)) {
                 updatedList.add(word);
             }
@@ -127,36 +129,38 @@ public class GameController {
     private boolean validGuess(String word, String guess, JSONArray marks) {
         for (int i = 0; i < marks.length(); i++) {
             int mark = marks.getInt(i);
-            char guessedChar = guess.charAt(i);
-            char actualChar = word.charAt(i);
+            char guessChar = guess.charAt(i);
+            char wordChar = word.charAt(i);
 
-            if (mark == 0) {
-                if (word.indexOf(guessedChar) != -1) {
+            if (mark == 2) {
+                if (wordChar != guessChar) {
                     return false;
                 }
             } else if (mark == 1) {
-                if (actualChar == guessedChar || word.indexOf(guessedChar) == -1) {
+                if (wordChar == guessChar || word.indexOf(guessChar) == -1) {
                     return false;
                 }
-            } else if (mark == 2) {
-                if (actualChar != guessedChar) {
+            } else if (mark == 0) {
+                if (wordChar == guessChar) {
                     return false;
                 }
-            }
+            }            
         }
         return true;
     }
 
     // Converts the class's wordlist file into an array
     private void fileToArray(String file) {
+        List<String> newList = new ArrayList<>();
         try {BufferedReader reader = new BufferedReader(new FileReader(file));
-            String word;
+            String word; 
             while ((word = reader.readLine()) != null) {
-                wordList.add(word.trim());
+                newList.add(word.trim());
             }
         } catch (IOException e) {
 
         }
+        this.wordList = newList;
     }
 
     // Guesses the first word in the list
